@@ -11,18 +11,16 @@ def menu():
 
 processes = []
 
-def input_processes():
-    process_num = int(input("Enter the number of processes: "))
-    for i in range(int(process_num)):
-        process = []
-        bt = int(input("Enter the burst time of P{}: ".format(i)))
-        process.append(i)
-        at = int(input("Enter the arrival time of P{}: ".format(i)))
-        process.append(at)
-        p = int(input("Enter the priority of P{}: ".format(i)))
-        process.append(bt)
-        print(process)
-        processes.append(process)
+def input_process(burst_time, arrival_time, priority):
+    process = []
+    bt = int(burst_time)
+    process.append(bt)
+    at = int(arrival_time)
+    process.append(at)
+    p = int(priority)
+    process.append(p)
+    print(process)
+    processes.append(process)
 
     print(processes)
 
@@ -114,6 +112,4 @@ def main():
             exit()
         else:
             print("Invalid choice")
-
-main()
 
