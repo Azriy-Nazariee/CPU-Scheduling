@@ -1,18 +1,22 @@
-def menu():
-    print("CPU Scheduling Algorithms")
-    print("1. Round Robin with Quantum 3")
-    print("2. Preemptive SJF")
-    print("3. Non-Preemptive SJF")
-    print("4. Preemptive Priority")
-    print("5. Non-Preemptive Priority")
-    print("5. Exit")
-    choice = int(input("Enter your choice: "))
-    return choice
-
+# for the gantt chart generation
 processes = []
+arrival_time = []
+burst_time = []
+finish_time = []
 
-def input_process(burst_time, arrival_time, priority):
+def updates(process, time):
+    processes.append(process[0])
+    print(processes)
+    arrival_time.append(process[3])
+    print(arrival_time)
+    burst_time.append(process[2])
+    print(burst_time)
+    finish_time.append(time)
+    print(finish_time)
+
+def input_process(process_num, burst_time, arrival_time, priority):
     process = []
+    process.append(process_num)
     bt = int(burst_time)
     process.append(bt)
     at = int(arrival_time)
@@ -25,91 +29,53 @@ def input_process(burst_time, arrival_time, priority):
     print(processes)
 
 def round_robin():
-    input_processes()
     quantum = 3
-    processes.sort(key=lambda x: x[1])
-    print(processes)
+    processes.sort(key=lambda x: x[3])  # Sort by arrival time
     time = 0
-    while len(processes) > 0:
-        if processes[0][2] > quantum:
+    ready_queue = [process for process in processes]  # Create a ready queue
+
+    while ready_queue:
+        process = ready_queue.pop(0)
+        if process[2] > quantum:
             time += quantum
-            processes[0][2] -= quantum
-            processes.append(processes[0])
-            processes.pop(0)
+            process[2] -= quantum
+            ready_queue.append(process)
+            updates(process, time)
         else:
-            time += processes[0][2]
-            processes[0][2] = 0
-            print("P{}: {}".format(processes[0][0], time))
-            processes.pop(0)
+            time += process[2]
+            print(f"P{process[0]}: {time}")
+            updates(process, time)
 
 def preemptive_sjf():
-    # Assuming input_processes() populates the processes list
-    input_processes()
     time = 0
     while processes:
-        # Sort processes based on burst time (shortest burst time first)
-        processes.sort(key=lambda x: x[0])
-        # Pop the process with the shortest burst time
+        processes.sort(key=lambda x: (x[3], x[2]))  # Sort by arrival time then by burst time
         current_process = processes.pop(0)
-        # Print the process ID and the current time
-        print("P{}: {}".format(current_process[0], time))
-        # Update the time by adding the burst time of the current process
+        print(f"P{current_process[0]}: {time}")
         time += current_process[2]
+        updates(current_process, time)
 
 def non_preemptive_sjf():
-    # Assuming input_processes() populates the processes list
-    input_processes()
-    # Sort processes based on burst time (shortest burst time first)
-    processes.sort(key=lambda x: x[0])
+    processes.sort(key=lambda x: (x[3], x[2]))  # Sort by arrival time then by burst time
     time = 0
     for process in processes:
-        # Print the process ID and the current time
-        print("P{}: {}".format(process[0], time))
-        # Update the time by adding the burst time of the current process
+        print(f"P{process[0]}: {time}")
         time += process[2]
+        updates(process, time)
 
 def preemptive_priority():
-    # Assuming input_processes() populates the processes list
-    input_processes()
     time = 0
     while processes:
-        # Sort processes based on priority (lowest priority first)
-        processes.sort(key=lambda x: x[2])
-        # Pop the process with the highest priority
+        processes.sort(key=lambda x: (x[4], x[3]))  # Sort by priority then by arrival time
         current_process = processes.pop(0)
-        # Print the process ID and the current time
-        print("P{}: {}".format(current_process[0], time))
-        # Update the time by adding the burst time of the current process
+        print(f"P{current_process[0]}: {time}")
         time += current_process[2]
+        updates(current_process, time)
 
 def non_preemptive_priority():
-    # Assuming input_processes() populates the processes list
-    input_processes()
-    # Sort processes based on priority (lowest priority first)
-    processes.sort(key=lambda x: x[2])
+    processes.sort(key=lambda x: (x[4], x[3]))  # Sort by priority then by arrival time
     time = 0
     for process in processes:
-        # Print the process ID and the current time
-        print("P{}: {}".format(process[0], time))
-        # Update the time by adding the burst time of the current process
+        print(f"P{process[0]}: {time}")
         time += process[2]
-
-
-def main():
-    while True:
-        choice = menu()
-        if choice == 1:
-            round_robin()
-        elif choice == 2:
-            preemptive_sjf()
-        elif choice == 3:
-            non_preemptive_sjf()
-        elif choice == 4:
-            preemptive_priority()
-        elif choice == 5:
-            non_preemptive_priority()
-        elif choice == 6:
-            exit()
-        else:
-            print("Invalid choice")
-
+        updates(process, time)
