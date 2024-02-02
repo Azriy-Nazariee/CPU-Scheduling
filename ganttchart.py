@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 
 # Sample data: Process IDs and their start and end times
-processes = ['P0', 'P1', 'P2', 'P3', 'P4', 'P5']
-start_times = [3, 3, 1, 1, 5, 6]
-end_times = [0, 1, 6, 12, 19, 27]  # Assuming continuous execution for simplicity
+processes = ['P1', 'P2', 'P3', 'P4', 'P5', 'P1', 'P3', 'P4', 'P5', 'P3']
+start_times = [0, 3, 6, 9, 12, 15, 17, 20, 23, 24]
+end_times = [3, 6, 9, 12, 15, 17, 20, 23, 24, 26]  # Assuming continuous execution for simplicity
 
 # Prepare figure
 plt.figure(figsize=(10, 6))
