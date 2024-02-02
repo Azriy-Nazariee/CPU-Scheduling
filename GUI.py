@@ -3,151 +3,193 @@ from tkinter import ttk
 from tkinter import messagebox
 import matplotlib.pyplot as plt
 import numpy as np
-from cpu_schedulling import input_process, preemptive_sjf, non_preemptive_sjf, preemptive_priority, non_preemptive_priority, round_robin, processes, arrival_time, burst_time, finish_time
+# Assuming cpu_schedulling.py is correctly implemented
+from cpu_schedulling import input_process, preemptive_sjf, non_preemptive_sjf, preemptive_priority, non_preemptive_priority, round_robin, pr, processes, arrival_time, burst_time, finish_time
 
+# Initialization of necessary variables
 current_process = 0
 process_count = 0
-type = ""
 done = False
 
-def check_done_and_create_charts():
-    global done
-    print(done)
-    if done:
-        create_gantt_chart()
-        create_table()
+def window_properties(window):
+    # Set the window size
+    window_width = 250
+    window_height = 300
 
-# Function to open the window for entering the number of processes
-def open_process_count_window():
-    global num_entry, inputnum  # Declare inputnum as a global variable
+    # Get the screen width and height
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
 
-    window.withdraw()
+    # Calculate the position to center the window
+    position_top = int(screen_height / 2 - window_height / 2)
+    position_right = int(screen_width / 2 - window_width / 2)
+
+    # Set the window size and position
+    window.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
+
+def check_done_and_create_charts(algo):
+    if algo == 'RR':
+        round_robin()
+    elif algo == 'P_SJF':
+        preemptive_sjf()
+    elif algo == 'NP_SJF':
+        non_preemptive_sjf()
+    elif algo == 'P_PRIO':
+        preemptive_priority()
+    elif algo == 'NP_PRIO':
+        non_preemptive_priority()
+    ganttchart()
+    table()
+
+def open_process_count_window(algo):
+    global num_entry, inputnum
+
+    window.withdraw()  # Assuming 'window' is your main application window
 
     inputnum = tk.Toplevel(window)
-    inputnum.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
+    window_properties(inputnum)
     num = tk.Label(inputnum, text="Enter the number of processes: ")
     num.pack()
-    
-    # Create a combobox with values from 3 to 10
+
     num_entry = ttk.Combobox(inputnum, values=list(range(3, 11)))
     num_entry.pack()
 
-    submit_num = tk.Button(inputnum, text="Submit", command=lambda: open_details_window(inputnum))
+    submit_num = tk.Button(inputnum, text="Submit", command=lambda: open_details_window(inputnum, algo))
     submit_num.pack()
-    return inputnum
 
-def open_details_window(previous_window):
-    global current_process, process_count, burst, arrival, priority, burst_entry, arrival_entry, priority_entry, inputprocess
+def open_details_window(previous_window, algo):
+    global current_process, process_count, burst_entry, arrival_entry, priority_entry, inputprocess
 
-    process_count = int(num_entry.get())  # Get the number of processes
+    process_count = int(num_entry.get())
+    current_process = 0  # Reset current_process for new input
 
-    previous_window.destroy()  # Close the previous window
+    previous_window.destroy()
 
-    # Input Processes' Details Window
     inputprocess = tk.Toplevel()
-    input_frame = tk.Frame(inputprocess)
-    inputprocess.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
+    window_properties(inputprocess)
     inputprocess.title("Input Processes")
 
-    # Dynamic labels and entries for process details
-    burst = tk.Label(input_frame, text=f"Enter the burst time of P{current_process}: ")
-    burst.pack()
-    burst_entry = tk.Entry(input_frame)
-    burst_entry.pack()
+    enter_process_details()  # Call function to enter details for the first process
 
-    arrival = tk.Label(input_frame, text=f"Enter the arrival time of P{current_process}: ")
-    arrival.pack()
-    arrival_entry = tk.Entry(input_frame)
-    arrival_entry.pack()
-
-    priority = tk.Label(input_frame, text=f"Enter the priority of P{current_process}: ")
-    priority.pack()
-    priority_entry = tk.Entry(input_frame)
-    priority_entry.pack()
-
-    input_frame.pack()
-
-    submit = tk.Button(input_frame, text="Submit", command=enter_details)
+    submit = tk.Button(inputprocess, text="Start Simulation", command=lambda: finalize_input(algo))
     submit.pack()
 
-# Input Processes' Details Window
+def enter_process_details():
+    global burst_entry, arrival_entry, priority_entry, inputprocess, current_process, process_label
+
+    if current_process == 0:  # Only setup the widgets if it's the first process
+        process_label = tk.Label(inputprocess, text=f"Process {current_process}")
+        process_label.pack()
+
+        tk.Label(inputprocess, text="Burst Time:").pack()
+        burst_entry = tk.Entry(inputprocess)
+        burst_entry.pack()
+
+        tk.Label(inputprocess, text="Arrival Time:").pack()
+        arrival_entry = tk.Entry(inputprocess)
+        arrival_entry.pack()
+
+        tk.Label(inputprocess, text="Priority:").pack()
+        priority_entry = tk.Entry(inputprocess)
+        priority_entry.pack()
+
+        submit_process = tk.Button(inputprocess, text="Submit Process", command=enter_details)
+        submit_process.pack()
+    else:
+        # Update the label for the next process
+        update_process_label()
+
+def update_process_label():
+    global current_process, process_label
+    process_label.config(text=f"Process {current_process}")  # Update label for next process
+    burst_entry.delete(0, 'end')  # Clear the previous entry
+    arrival_entry.delete(0, 'end')  # Clear the previous entry
+    priority_entry.delete(0, 'end')  # Clear the previous entry
 
 def enter_details():
-    global current_process, done
+    global current_process
 
-    # Ensure that the current process number does not exceed the total number of processes
+    # Logic to input process and manage process details
+    process_num = "P" + str(current_process)  # Process numbering starts at 1
+    b_time = int(burst_entry.get())
+    a_time = int(arrival_entry.get())
+    p_value = int(priority_entry.get())
+
+    input_process(process_num, b_time, a_time, p_value)  # Assuming this function exists to handle process data
+
+    current_process += 1
     if current_process < process_count:
-        try:
-            # Get the values from the Entry widgets and convert them to integers
-            process_num = "P"+str(current_process)
-            burst_time = int(burst_entry.get())
-            arrival_time = int(arrival_entry.get())
-            priority_value = int(priority_entry.get())
-
-            print(current_process)
-            print(process_count)
-
-            if current_process < process_count:
-
-                # Call your function to process these values (assuming input_process function exists)
-                input_process(process_num, burst_time, arrival_time, priority_value)
-
-                # Clear the Entry widgets for the next input
-                burst_entry.delete(0, 'end')
-                arrival_entry.delete(0, 'end')
-                priority_entry.delete(0, 'end')
-
-                # Increment the current process number and update labels for the next process
-                current_process += 1
-                if current_process != process_count:
-                    burst.config(text=f"Enter the burst time of P{current_process}: ")
-                    arrival.config(text=f"Enter the arrival time of P{current_process}: ")
-                    priority.config(text=f"Enter the priority of P{current_process}: ")
-                else:
-                    done = True
-                    print("All process details entered")  # Placeholder for further action
-                    messagebox.showinfo("Information", "All processes have already been entered")
-                    inputprocess.destroy()  # Optionally close the input process window
-
-                    # Call the function that generates the table and graph
-                    check_done_and_create_charts()
-
-        except ValueError:
-            # Handle cases where the input is not a valid integer
-            print("Please enter valid integer values for burst time, arrival time, and priority")
+        update_process_label()  # Reuse the interface for the next process
     else:
-        # This part of the code should not be reachable due to the checks, but it's good practice to handle it
-        print("All processes have already been entered")
+        messagebox.showinfo("Information", "All processes have been entered. Proceeding to scheduling and charts. Please click 'Start Simulation' to start the simulation.")
 
+
+def finalize_input(algo):
+    inputprocess.destroy()  # Close input window after all processes are entered
+    check_done_and_create_charts(algo)  # Now proceed to scheduling and chart creation
+
+# Example setup function calls
 def rr_setup():
-    open_process_count_window()
-    round_robin()
-    check_done_and_create_charts()
+    open_process_count_window('RR')
 
 def p_sjf_setup():
-    open_process_count_window()
-    preemptive_sjf()
-    check_done_and_create_charts()
+    open_process_count_window('P_SJF')
 
 def np_sjf_setup():
-    open_process_count_window()
-    non_preemptive_sjf()
-    check_done_and_create_charts()
+    open_process_count_window('NP_SJF')
 
 def p_priority_setup():
-    open_process_count_window()
-    preemptive_priority()
-    check_done_and_create_charts()
+    open_process_count_window('P_PRIO')
 
 def np_priority_setup():
-    open_process_count_window()
-    non_preemptive_priority()
-    check_done_and_create_charts()
+    open_process_count_window('NP_PRIO')
 
-def create_table():
+def ganttchart():
+    # Prepare figure
+    plt.figure(figsize=(10, 6))
+
+    # Constant y-coordinate for all bars, representing a single line
+    y_coordinate = 0.8  # Adjust this to move the entire line of bars up or down
+
+
+    # Create a bar for each time a process is running
+    for i, process in enumerate(processes):
+        duration = finish_time[i] - arrival_time[i]
+        plt.barh(y_coordinate, duration, left=arrival_time[i], height=0.4, color='skyblue', edgecolor='black')
+        
+        # Text for process name in the middle of the bar
+        middle_point = arrival_time[i] + duration / 2
+        plt.text(middle_point, y_coordinate, process[0], ha='center', va='center')
+        
+        # Text for end time at the end of each bar, placed below the bar
+        plt.text(finish_time[i], y_coordinate - 0.205, str(finish_time[i]), ha='center', va='top', color='red')  # Adjust the y-coordinate offset as needed
+
+    # Setting labels and title
+    plt.xlabel('Time Units')
+    plt.title('CPU Scheduling Gantt Chart')
+
+    # Remove y-axis labels and ticks as they are not relevant in this context
+    plt.yticks([])
+    plt.ylabel('')
+
+    # Optionally, add a line for clarity
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+    plt.tight_layout()  # Adjust the layout to make room for text
+
+    # Show the plot
+    plt.show()
+
+def table():
+
     # Calculate turnaround time and waiting time for each process
     turnaround_time = [f - a for f, a in zip(finish_time, arrival_time)]
     waiting_time = [t - b for t, b in zip(turnaround_time, burst_time)]
+
+    print(arrival_time)
+    print(burst_time)
+    print(finish_time)
+    print(turnaround_time)
+    print(waiting_time)
 
     # Calculate total and average turnaround time and waiting time
     total_turnaround_time = sum(turnaround_time)
@@ -156,9 +198,9 @@ def create_table():
     average_waiting_time = total_waiting_time / len(waiting_time)
 
     # Create a data list from the process details
-    data = list(zip(processes, arrival_time, burst_time, finish_time, turnaround_time, waiting_time))
-    data.append(['Total', '', '', total_turnaround_time, total_waiting_time, ''])
-    data.append(['Average', '', '', average_turnaround_time, average_waiting_time, ''])
+    data = list(zip(pr, arrival_time, burst_time, finish_time, turnaround_time, waiting_time))
+    data.append(['Total', '', '', '', total_turnaround_time, total_waiting_time])
+    data.append(['Average', '', '', '', average_turnaround_time, average_waiting_time])
 
     # Create a figure and a plot
     fig, ax = plt.subplots()
@@ -170,32 +212,10 @@ def create_table():
     # Create a table and add it to the plot
     table = ax.table(cellText=data, colLabels=['Process', 'Arrival Time', 'Burst Time', 'Finish Time', 'Turnaround Time', 'Waiting Time'], loc='center')
 
-    plt.show()
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)  # Adjust font size as needed
+    table.scale(1, 1)  # Scale table size for better visibility
 
-def create_gantt_chart():
-    # Prepare figure
-    plt.figure(figsize=(10, 6))
-
-    # Constant y-coordinate for all bars, representing a single line
-    y_coordinate = [1] * len(processes)  # Same y-value for all processes
-
-    # Create a bar for each time a process is running
-    for i, process in enumerate(processes):
-        plt.barh(y_coordinate, finish_time[i] - arrival_time[i], left=arrival_time[i], height=0.4, color='skyblue', edgecolor='black')
-
-        # Optionally, add text labels
-        middle_point = arrival_time[i] + (finish_time[i] - arrival_time[i]) / 2
-        plt.text(middle_point, y_coordinate[i], process, ha='center', va='center')
-
-    # Setting labels and title
-    plt.xlabel('Time Units')
-    plt.title('CPU Scheduling Gantt Chart')
-
-    # Remove y-axis labels and ticks as they are not relevant in this context
-    plt.yticks([])
-    plt.ylabel('')
-
-    # Show the plot
     plt.show()
 
 # Main Menu 
@@ -203,23 +223,10 @@ def create_gantt_chart():
 # Create the tkinter window
 window = tk.Tk()
 
+window_properties(window)
+
 # Set the window title
 window.title("CPU Scheduling Algorithms")
-
-# Set the window size
-window_width = 250
-window_height = 300
-
-# Get the screen width and height
-screen_width = window.winfo_screenwidth()
-screen_height = window.winfo_screenheight()
-
-# Calculate the position to center the window
-position_top = int(screen_height / 2 - window_height / 2)
-position_right = int(screen_width / 2 - window_width / 2)
-
-# Set the window size and position
-window.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
 
 label = tk.Label(window, text="Welcome To CPU Scheduling Algorithms")
 label.pack(anchor='center', expand=True)
