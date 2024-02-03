@@ -12,7 +12,7 @@ def clone_processes():
     print(processes)  # Add this line to print the content of processes
     return [list(p) for p in processes]
 
-# Data Visualisation Data -----------------------------------------------------------------------------------
+# Gantt Chart and Table Visualisation Data ------------------------------------------------------------------
     
 def ganttchartdata(process_id, start, end):
     pr_gantt.append(process_id)
