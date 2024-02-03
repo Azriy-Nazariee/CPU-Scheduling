@@ -198,9 +198,9 @@ def table(algo):
 
     # Calculate total and average turnaround time and waiting time
     total_turnaround_time = sum(tat)
-    average_turnaround_time = total_turnaround_time / len(tat)
+    average_turnaround_time = round(total_turnaround_time / len(tat),4)
     total_waiting_time = sum(wt)
-    average_waiting_time = total_waiting_time / len(wt)
+    average_waiting_time = round(total_waiting_time / len(wt),4)
 
     # Create a data list from the process details
     data = list(zip(pr, at, bt, ft, tat, wt))
@@ -219,7 +219,7 @@ def table(algo):
 
     table.auto_set_font_size(False)
     table.set_fontsize(10)  # Adjust font size as needed
-    table.scale(1, 1)  # Scale table size for better visibility
+    table.scale(1.2, 1.3)  # Scale table size for better visibility
 
     # Add a title to the figure based on the algorithm
     if algo == 'RR':
