@@ -2,13 +2,11 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import matplotlib.pyplot as plt
-import numpy as np
-from PIL import Image, ImageTk
 
-# Assuming cpu_schedulling.py is correctly implemented
 from cpu_schedulling import input_process, preemptive_sjf, non_preemptive_sjf, non_preemptive_priority, round_robin, pr, bt, at, ft, tat, wt, pr_gantt, start_times, end_times
 
-# Initialization of necessary variables
+# Initialisation --------------------------------------------------------------------------------------------------------------------------
+
 current_process = 0
 process_count = 0
 done = False
@@ -31,17 +29,7 @@ def window_properties(window):
 
     window.iconbitmap('CPU.ico')
 
-def check_done_and_create_charts(algo):
-    if algo == 'RR':
-        round_robin()
-    elif algo == 'P_SJF':
-        preemptive_sjf()
-    elif algo == 'NP_SJF':
-        non_preemptive_sjf()
-    elif algo == 'NP_PRIO':
-        non_preemptive_priority()
-    ganttchart(algo)
-    table(algo)
+# Process Count Input ---------------------------------------------------------------------------------------------------------------------
 
 def open_process_count_window(algo):
     global num_entry, inputnum
@@ -58,6 +46,8 @@ def open_process_count_window(algo):
 
     submit_num = tk.Button(inputnum, text="Submit", command=lambda: open_details_window(inputnum, algo))
     submit_num.pack()
+
+# Process Details Input ------------------------------------------------------------------------------------------------------------------
 
 def open_details_window(previous_window, algo):
     global current_process, process_count, burst_entry, arrival_entry, priority_entry, inputprocess
@@ -125,12 +115,8 @@ def enter_details():
     else:
         messagebox.showinfo("Information", "All processes have been entered. Proceeding to scheduling and charts. Please click 'Start Simulation' to start the simulation.")
 
-
-def finalize_input(algo):
-    inputprocess.destroy()  # Close input window after all processes are entered
-    check_done_and_create_charts(algo)  # Now proceed to scheduling and chart creation
-
-# Example setup function calls
+# Algorithm Setup -------------------------------------------------------------------------------------------------------------------------
+    
 def rr_setup():
     open_process_count_window('RR')
 
@@ -142,6 +128,24 @@ def np_sjf_setup():
 
 def np_priority_setup():
     open_process_count_window('NP_PRIO')
+
+# Gantt Chart and Table Generation --------------------------------------------------------------------------------------------------------
+
+def check_done_and_create_charts(algo):
+    if algo == 'RR':
+        round_robin()
+    elif algo == 'P_SJF':
+        preemptive_sjf()
+    elif algo == 'NP_SJF':
+        non_preemptive_sjf()
+    elif algo == 'NP_PRIO':
+        non_preemptive_priority()
+    ganttchart(algo)
+    table(algo)
+
+def finalize_input(algo):
+    inputprocess.destroy()  # Close input window after all processes are entered
+    check_done_and_create_charts(algo)  # Now proceed to scheduling and chart creation
 
 def ganttchart(algo):
     # Prepare figure
@@ -229,8 +233,8 @@ def table(algo):
 
     plt.show()
 
-# Main Menu 
-
+# Main Menu ------------------------------------------------------------------------------------------------------------------------------
+    
 # Create the tkinter window
 window = tk.Tk()
 
