@@ -30,23 +30,40 @@ def round_robin():
     local_processes.sort(key=lambda x: x[2])  # Sort by arrival time
 
     while local_processes or ready_queue:
+        # Move processes from local_processes to ready_queue if their arrival time is <= current time
         while local_processes and local_processes[0][2] <= time:
             ready_queue.append(local_processes.pop(0))
+        # If there are processes in the ready queue, execute them
         if ready_queue:
             process = ready_queue.pop(0)
+            # Execute the process for either the quantum or its remaining burst time, whichever is smaller
             exec_time = min(quantum, process[1])
-            ganttchartdata(process[0], time, time + exec_time)
+            # Update the Gantt chart or any other visualization
+            # ganttchartdata(process[0], time, time + exec_time)
+            # Update the remaining burst time for the process
             process[1] -= exec_time
+            # Update the current time
             time += exec_time
+            # If the process still has remaining burst time, put it back in the ready queue
             if process[1] > 0:
                 ready_queue.append(process)
+            # If the process has finished, record its finish time
             else:
                 finish_times[process[0]] = time
+        # If there are no processes in the ready queue, move to the next time unit
         else:
             time += 1
 
-    for process in processes:
-        tabledata(process[0], process[1], process[2], finish_times.get(process[0], time))
+    # Print the finish times of all processes
+    for process, finish_time in finish_times.items():
+        print(f"Process {process}: Finish Time {finish_time}")
+
+# Example function to clone processes (replace with actual implementation if needed)
+def clone_processes():
+    return [("P1", 5, 0), ("P2", 4, 1), ("P3", 2, 2)]
+
+# Example usage
+round_robin()
 
 # Preemptive Shortest Job First (SJF)
 def preemptive_sjf():
