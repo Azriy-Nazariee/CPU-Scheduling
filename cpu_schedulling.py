@@ -5,6 +5,7 @@ pr, bt, at, ft, tat, wt = [], [], [], [], [], []  # Metrics data
 
 def input_process(process_num, burst_time, arrival_time, priority):
     processes.append([process_num, burst_time, arrival_time, priority])
+    print(processes)
 
 def ganttchartdata(process_id, start, end):
     pr_gantt.append(process_id)
@@ -20,6 +21,7 @@ def tabledata(process_num, burst_time, arrival_time, finish_time):
     wt.append(finish_time - arrival_time - burst_time)
 
 def clone_processes():
+    print(processes)  # Add this line to print the content of processes
     return [list(p) for p in processes]
 
 # Round Robin
@@ -57,13 +59,6 @@ def round_robin():
     # Print the finish times of all processes
     for process, finish_time in finish_times.items():
         print(f"Process {process}: Finish Time {finish_time}")
-
-# Example function to clone processes (replace with actual implementation if needed)
-def clone_processes():
-    return [("P1", 5, 0), ("P2", 4, 1), ("P3", 2, 2)]
-
-# Example usage
-round_robin()
 
 # Preemptive Shortest Job First (SJF)
 def preemptive_sjf():
@@ -135,12 +130,21 @@ def non_preemptive_priority():
     local_processes = sorted(clone_processes(), key=lambda x: (x[2], x[3], x[1]))  # Sort by arrival time, priority, burst time
 
     while local_processes:
-        process = local_processes.pop(0)
-        if time < process[2]:
-            time = process[2]
-        ganttchartdata(process[0], time, time + process[1])
-        time += process[1]
-        finish_times[process[0]] = time
+        ready_queue = [process for process in local_processes if process[2] <= time]
+        
+        if ready_queue:
+            process_to_execute = min(ready_queue, key=lambda x: (x[3], x[2]))  # Choose FCFS for same priority
+            local_processes.remove(process_to_execute)
+
+            if time < process_to_execute[2]:
+                time = process_to_execute[2]
+
+            ganttchartdata(process_to_execute[0], time, time + process_to_execute[1])
+            time += process_to_execute[1]
+            finish_times[process_to_execute[0]] = time
+        else:
+            # If no ready processes, just increment time
+            time += 1
 
     for process in processes:
         tabledata(process[0], process[1], process[2], finish_times.get(process[0], time))
