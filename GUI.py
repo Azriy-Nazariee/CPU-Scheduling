@@ -3,8 +3,10 @@ from tkinter import ttk
 from tkinter import messagebox
 import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image, ImageTk
+
 # Assuming cpu_schedulling.py is correctly implemented
-from cpu_schedulling import input_process, preemptive_sjf, non_preemptive_sjf, preemptive_priority, non_preemptive_priority, round_robin, pr, processes, arrival_time, burst_time, finish_time
+from cpu_schedulling import input_process, preemptive_sjf, non_preemptive_sjf, preemptive_priority, non_preemptive_priority, round_robin, pr, bt, at, ft, tat, wt, pr_gantt, start_times, end_times
 
 # Initialization of necessary variables
 current_process = 0
@@ -27,6 +29,8 @@ def window_properties(window):
     # Set the window size and position
     window.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
 
+    window.iconbitmap('CPU.ico')
+
 def check_done_and_create_charts(algo):
     if algo == 'RR':
         round_robin()
@@ -38,8 +42,8 @@ def check_done_and_create_charts(algo):
         preemptive_priority()
     elif algo == 'NP_PRIO':
         non_preemptive_priority()
-    ganttchart()
-    table()
+    ganttchart(algo)
+    table(algo)
 
 def open_process_count_window(algo):
     global num_entry, inputnum
@@ -71,8 +75,8 @@ def open_details_window(previous_window, algo):
 
     enter_process_details()  # Call function to enter details for the first process
 
-    submit = tk.Button(inputprocess, text="Start Simulation", command=lambda: finalize_input(algo))
-    submit.pack()
+    start_simulation = tk.Button(inputprocess, text="Start Simulation", command=lambda: finalize_input(algo))
+    start_simulation.pack()
 
 def enter_process_details():
     global burst_entry, arrival_entry, priority_entry, inputprocess, current_process, process_label
@@ -144,29 +148,41 @@ def p_priority_setup():
 def np_priority_setup():
     open_process_count_window('NP_PRIO')
 
-def ganttchart():
+def ganttchart(algo):
     # Prepare figure
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(10, 4))
 
     # Constant y-coordinate for all bars, representing a single line
     y_coordinate = 0.8  # Adjust this to move the entire line of bars up or down
 
+    print(pr_gantt)
+    print(start_times)
+    print(end_times)
 
     # Create a bar for each time a process is running
-    for i, process in enumerate(processes):
-        duration = finish_time[i] - arrival_time[i]
-        plt.barh(y_coordinate, duration, left=arrival_time[i], height=0.4, color='skyblue', edgecolor='black')
+    for i, process in enumerate(pr_gantt):
+        duration = end_times[i] - start_times[i]
+        plt.barh(y_coordinate, duration, left=start_times[i], height=0.4, color='skyblue', edgecolor='black')
         
         # Text for process name in the middle of the bar
-        middle_point = arrival_time[i] + duration / 2
-        plt.text(middle_point, y_coordinate, process[0], ha='center', va='center')
+        middle_point = start_times[i] + duration / 2
+        plt.text(middle_point, y_coordinate, process, ha='center', va='center')
         
         # Text for end time at the end of each bar, placed below the bar
-        plt.text(finish_time[i], y_coordinate - 0.205, str(finish_time[i]), ha='center', va='top', color='red')  # Adjust the y-coordinate offset as needed
+        plt.text(end_times[i], y_coordinate - 0.205, str(end_times[i]), ha='center', va='top', color='red')  # Adjust the y-coordinate offset as needed
 
     # Setting labels and title
     plt.xlabel('Time Units')
-    plt.title('CPU Scheduling Gantt Chart')
+    if algo == 'RR':
+        plt.title('Round Robin CPU Scheduling Gantt Chart')
+    elif algo == 'P_SJF':
+        plt.title('Preemptive SJF CPU Scheduling Gantt Chart')
+    elif algo == 'NP_SJF':
+        plt.title('Non-Preemptive SJF CPU Scheduling Gantt Chart')
+    elif algo == 'P_PRIO':
+        plt.title('Preemptive Priority CPU Scheduling Gantt Chart')
+    elif algo == 'NP_PRIO':
+        plt.title('Non-Preemptive Priority CPU Scheduling Gantt Chart')
 
     # Remove y-axis labels and ticks as they are not relevant in this context
     plt.yticks([])
@@ -179,26 +195,16 @@ def ganttchart():
     # Show the plot
     plt.show()
 
-def table():
-
-    # Calculate turnaround time and waiting time for each process
-    turnaround_time = [f - a for f, a in zip(finish_time, arrival_time)]
-    waiting_time = [t - b for t, b in zip(turnaround_time, burst_time)]
-
-    print(arrival_time)
-    print(burst_time)
-    print(finish_time)
-    print(turnaround_time)
-    print(waiting_time)
+def table(algo):
 
     # Calculate total and average turnaround time and waiting time
-    total_turnaround_time = sum(turnaround_time)
-    average_turnaround_time = total_turnaround_time / len(turnaround_time)
-    total_waiting_time = sum(waiting_time)
-    average_waiting_time = total_waiting_time / len(waiting_time)
+    total_turnaround_time = sum(tat)
+    average_turnaround_time = total_turnaround_time / len(tat)
+    total_waiting_time = sum(wt)
+    average_waiting_time = total_waiting_time / len(wt)
 
     # Create a data list from the process details
-    data = list(zip(pr, arrival_time, burst_time, finish_time, turnaround_time, waiting_time))
+    data = list(zip(pr, at, bt, ft, tat, wt))
     data.append(['Total', '', '', '', total_turnaround_time, total_waiting_time])
     data.append(['Average', '', '', '', average_turnaround_time, average_waiting_time])
 
@@ -215,6 +221,18 @@ def table():
     table.auto_set_font_size(False)
     table.set_fontsize(10)  # Adjust font size as needed
     table.scale(1, 1)  # Scale table size for better visibility
+
+    # Add a title to the figure based on the algorithm
+    if algo == 'RR':
+        plt.suptitle('Round Robin CPU Scheduling Details')
+    elif algo == 'P_SJF':
+        plt.suptitle('Preemptive SJF CPU Scheduling Details')
+    elif algo == 'NP_SJF':
+        plt.suptitle('Non-Preemptive SJF CPU Scheduling Details')
+    elif algo == 'P_PRIO':
+        plt.suptitle('Preemptive Priority CPU Scheduling Details')
+    elif algo == 'NP_PRIO':
+        plt.suptitle('Non-Preemptive Priority CPU Scheduling Details')
 
     plt.show()
 
