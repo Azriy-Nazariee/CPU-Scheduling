@@ -2,7 +2,7 @@
 
 processes = []  # Process format: [process_num, burst_time, arrival_time, priority]
 pr_gantt, start_times, end_times = [], [], []  # Gantt chart data
-pr, bt, at, ft, tat, wt = [], [], [], [], [], []  # Metrics data
+pr, bt, at, ft, tat, wt = [], [], [], [], [], []  # Table data
 
 def input_process(process_num, burst_time, arrival_time, priority):
     processes.append([process_num, burst_time, arrival_time, priority])
