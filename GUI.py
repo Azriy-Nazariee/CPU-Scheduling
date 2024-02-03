@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from cpu_schedulling import input_process, preemptive_sjf, non_preemptive_sjf, non_preemptive_priority, round_robin, pr, bt, at, ft, tat, wt, pr_gantt, start_times, end_times
 
-# Initialisation --------------------------------------------------------------------------------------------------------------------------
+# Initialisation -------------------------------------------------------------------------------------------------------------------------
 
 current_process = 0
 process_count = 0
@@ -29,7 +29,7 @@ def window_properties(window):
 
     window.iconbitmap('CPU.ico')
 
-# Process Count Input ---------------------------------------------------------------------------------------------------------------------
+# Process Count Input --------------------------------------------------------------------------------------------------------------------
 
 def open_process_count_window(algo):
     global num_entry, inputnum
@@ -115,7 +115,7 @@ def enter_details():
     else:
         messagebox.showinfo("Information", "All processes have been entered. Proceeding to scheduling and charts. Please click 'Start Simulation' to start the simulation.")
 
-# Algorithm Setup -------------------------------------------------------------------------------------------------------------------------
+# Algorithm Setup ------------------------------------------------------------------------------------------------------------------------
     
 def rr_setup():
     open_process_count_window('RR')
@@ -129,7 +129,7 @@ def np_sjf_setup():
 def np_priority_setup():
     open_process_count_window('NP_PRIO')
 
-# Gantt Chart and Table Generation --------------------------------------------------------------------------------------------------------
+# Gantt Chart and Table Generation -------------------------------------------------------------------------------------------------------
 
 def check_done_and_create_charts(algo):
     if algo == 'RR':
