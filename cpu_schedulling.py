@@ -41,7 +41,7 @@ def round_robin():
             # Execute the process for either the quantum or its remaining burst time, whichever is smaller
             exec_time = min(quantum, process[1])
             # Update the Gantt chart or any other visualization
-            # ganttchartdata(process[0], time, time + exec_time)
+            ganttchartdata(process[0], time, time + exec_time)
             # Update the remaining burst time for the process
             process[1] -= exec_time
             # Update the current time
@@ -56,9 +56,8 @@ def round_robin():
         else:
             time += 1
 
-    # Print the finish times of all processes
-    for process, finish_time in finish_times.items():
-        print(f"Process {process}: Finish Time {finish_time}")
+    for process in processes:
+        tabledata(process[0], process[1], process[2], finish_times.get(process[0], time))
 
 # Preemptive Shortest Job First (SJF)
 def preemptive_sjf():
