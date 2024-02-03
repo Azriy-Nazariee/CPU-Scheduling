@@ -20,19 +20,24 @@ Ensure you have Python installed on your system. This project requires Python 3.
    git clone https://github.com/yourusername/cpu-scheduling-simulator.git
 ```
 2. Navigate into the project directory:
-
-`cd cpu-scheduling-simulator`
+   
+```
+cd cpu-scheduling-simulator
+```
 
 3. Install the required dependencies:
-
-`pip install matplotlib tk`
+   
+```
+pip install matplotlib tk
+```
 
 ## Usage
 
 To run the simulator, execute the following command in the terminal:
 
-`python main.py`
-
+```
+python main.py
+```
 
 Upon launch, the GUI will guide you through the following steps:
 
