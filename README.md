@@ -17,7 +17,7 @@ Ensure you have Python installed on your system. This project requires Python 3.
 1. Clone the repository to your local machine:
 
 ```bash
-   git clone https://github.com/yourusername/cpu-scheduling-simulator.git
+git clone https://github.com/yourusername/cpu-scheduling-simulator.git
 ```
 2. Navigate into the project directory:
    
