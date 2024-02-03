@@ -1,4 +1,5 @@
-# Initial setup
+# Initilisation ---------------------------------------------------------------------------------------------
+
 processes = []  # Process format: [process_num, burst_time, arrival_time, priority]
 pr_gantt, start_times, end_times = [], [], []  # Gantt chart data
 pr, bt, at, ft, tat, wt = [], [], [], [], [], []  # Metrics data
@@ -7,6 +8,12 @@ def input_process(process_num, burst_time, arrival_time, priority):
     processes.append([process_num, burst_time, arrival_time, priority])
     print(processes)
 
+def clone_processes():
+    print(processes)  # Add this line to print the content of processes
+    return [list(p) for p in processes]
+
+# Data Visualisation Data -----------------------------------------------------------------------------------
+    
 def ganttchartdata(process_id, start, end):
     pr_gantt.append(process_id)
     start_times.append(start)
@@ -20,9 +27,7 @@ def tabledata(process_num, burst_time, arrival_time, finish_time):
     tat.append(finish_time - arrival_time)
     wt.append(finish_time - arrival_time - burst_time)
 
-def clone_processes():
-    print(processes)  # Add this line to print the content of processes
-    return [list(p) for p in processes]
+# CPU Scheduling Algorithms ---------------------------------------------------------------------------------
 
 # Round Robin
 def round_robin():
