@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image, ImageTk
 
 # Assuming cpu_schedulling.py is correctly implemented
-from cpu_schedulling import input_process, preemptive_sjf, non_preemptive_sjf, preemptive_priority, non_preemptive_priority, round_robin, pr, bt, at, ft, tat, wt, pr_gantt, start_times, end_times
+from cpu_schedulling import input_process, preemptive_sjf, non_preemptive_sjf, non_preemptive_priority, round_robin, pr, bt, at, ft, tat, wt, pr_gantt, start_times, end_times
 
 # Initialization of necessary variables
 current_process = 0
@@ -38,8 +38,6 @@ def check_done_and_create_charts(algo):
         preemptive_sjf()
     elif algo == 'NP_SJF':
         non_preemptive_sjf()
-    elif algo == 'P_PRIO':
-        preemptive_priority()
     elif algo == 'NP_PRIO':
         non_preemptive_priority()
     ganttchart(algo)
@@ -142,9 +140,6 @@ def p_sjf_setup():
 def np_sjf_setup():
     open_process_count_window('NP_SJF')
 
-def p_priority_setup():
-    open_process_count_window('P_PRIO')
-
 def np_priority_setup():
     open_process_count_window('NP_PRIO')
 
@@ -229,8 +224,6 @@ def table(algo):
         plt.suptitle('Preemptive SJF CPU Scheduling Details')
     elif algo == 'NP_SJF':
         plt.suptitle('Non-Preemptive SJF CPU Scheduling Details')
-    elif algo == 'P_PRIO':
-        plt.suptitle('Preemptive Priority CPU Scheduling Details')
     elif algo == 'NP_PRIO':
         plt.suptitle('Non-Preemptive Priority CPU Scheduling Details')
 
@@ -262,9 +255,6 @@ p_sjf.pack()
 
 np_sjf = tk.Button(buttonframe, text="Non-Preemptive SJF", width=button_width, height=button_height, command=np_sjf_setup)
 np_sjf.pack()
-
-p_priority = tk.Button(buttonframe, text="Preemptive Priority", width=button_width, height=button_height, command=p_priority_setup)
-p_priority.pack()
 
 np_priority = tk.Button(buttonframe, text="Non-Preemptive Priority", width=button_width, height=button_height, command=np_priority_setup)
 np_priority.pack()

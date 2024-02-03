@@ -99,30 +99,6 @@ def non_preemptive_sjf():
     for process in processes:
         tabledata(process[0], process[1], process[2], finish_times.get(process[0], time))
 
-# Preemptive Priority Scheduling
-def preemptive_priority():
-    time, finish_times = 0, {}
-    ready_queue, local_processes = [], clone_processes()
-    local_processes.sort(key=lambda x: x[2])  # Sort by arrival time
-
-    while local_processes or ready_queue:
-        while local_processes and local_processes[0][2] <= time:
-            ready_queue.append(local_processes.pop(0))
-            ready_queue.sort(key=lambda x: x[3])  # Sort by priority
-        if ready_queue:
-            process = ready_queue[0]
-            ganttchartdata(process[0], time, time + 1)
-            process[1] -= 1
-            time += 1
-            if process[1] == 0:
-                ready_queue.pop(0)
-                finish_times[process[0]] = time
-        else:
-            time += 1
-
-    for process in processes:
-        tabledata(process[0], process[1], process[2], finish_times.get(process[0], time))
-
 # Non-Preemptive Priority Scheduling
 def non_preemptive_priority():
     time, finish_times = 0, {}
