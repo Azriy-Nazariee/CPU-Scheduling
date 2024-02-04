@@ -33,13 +33,21 @@ def tabledata(process_num, burst_time, arrival_time, finish_time):
 def round_robin():
     quantum = 3
     time, finish_times = 0, {}
-    ready_queue, local_processes = [], clone_processes()
+    ready_queue, local_processes, unfinished = [], clone_processes(), None
     local_processes.sort(key=lambda x: x[2])  # Sort by arrival time
 
     while local_processes or ready_queue:
         # Move processes from local_processes to ready_queue if their arrival time is <= current time
         while local_processes and local_processes[0][2] <= time:
             ready_queue.append(local_processes.pop(0))
+
+        for p in ready_queue:
+            if p[0] == unfinished:
+                ready_queue.remove(p)
+                ready_queue.append(p)
+                unfinished = None
+                break
+
         # If there are processes in the ready queue, execute them
         if ready_queue:
             process = ready_queue.pop(0)
@@ -54,6 +62,7 @@ def round_robin():
             # If the process still has remaining burst time, put it back in the ready queue
             if process[1] > 0:
                 ready_queue.append(process)
+                unfinished = process[0]
             # If the process has finished, record its finish time
             else:
                 finish_times[process[0]] = time
