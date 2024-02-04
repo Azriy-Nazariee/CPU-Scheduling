@@ -48,16 +48,12 @@ def round_robin():
                 unfinished = None
                 break
 
-        # If there are processes in the ready queue, execute them
         if ready_queue:
             process = ready_queue.pop(0)
             # Execute the process for either the quantum or its remaining burst time, whichever is smaller
             exec_time = min(quantum, process[1])
-            # Update the Gantt chart or any other visualization
             ganttchartdata(process[0], time, time + exec_time)
-            # Update the remaining burst time for the process
             process[1] -= exec_time
-            # Update the current time
             time += exec_time
             # If the process still has remaining burst time, put it back in the ready queue
             if process[1] > 0:

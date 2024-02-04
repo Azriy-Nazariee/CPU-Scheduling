@@ -2,6 +2,11 @@
 
 A comprehensive CPU Scheduling Simulator built with Python, leveraging Tkinter for the GUI and Matplotlib for generating Gantt charts and detailed tables. This simulator provides an interactive way to understand how different CPU scheduling algorithms work, including Round Robin, Preemptive Shortest Job First (SJF), Non-Preemptive SJF, and Non-Preemptive Priority scheduling.
 
+The simulator is made by
+>Mohd Azriy Akmalhazim Bin Mohd Nazariee | 1211104288 <br>
+>Muhammad Amir Adib Bin Mohd Aminuddin | 1211103233 <br>
+>Meor Imran Najmuddin | 1211101518 <br>
+
 ## Features
 
 - **Interactive GUI**: Utilizes Tkinter for an easy-to-navigate graphical user interface, allowing users to input process details such as burst time, arrival time, and priority.
@@ -14,10 +19,12 @@ A comprehensive CPU Scheduling Simulator built with Python, leveraging Tkinter f
 
 Ensure you have Python installed on your system. This project requires Python 3.x.
 
-1. Clone the repository to your local machine:
+1. Clone the repository to your local machine (Or download the ZIP file and extract it).
+
+    The command to clone the repository is as follows:
 
 ```bash
-git clone https://github.com/yourusername/cpu-scheduling-simulator.git
+git clone https://github.com/Azriy-Nazariee/CPU-Scheduling
 ```
 2. Navigate into the project directory:
    
@@ -36,7 +43,7 @@ pip install matplotlib tk
 To run the simulator, execute the following command in the terminal:
 
 ```
-python main.py
+python GUI.py
 ```
 
 Upon launch, the GUI will guide you through the following steps:
@@ -45,10 +52,3 @@ Upon launch, the GUI will guide you through the following steps:
 2. **Input Process Details**: Enter the number of processes and specify their burst time, arrival time, and priority.
 3. **Simulation and Visualization**: After inputting the process details, the simulator will compute the scheduling based on the selected algorithm and display the Gantt chart and a detailed table showing the finish time, turnaround time, and waiting time for each process.
 
-## Contributing
-
-Contributions to enhance the CPU Scheduling Simulator are welcome. This can include adding new scheduling algorithms, improving the UI, or fixing bugs. Please feel free to fork the repository and submit a pull request with your improvements.
-
----
-
-For more details on how to use the simulator or to report issues, please refer to the project's GitHub repository.

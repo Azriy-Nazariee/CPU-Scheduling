@@ -1,3 +1,12 @@
+# Please run this file to start the application
+# Please install the required packages by running the following command:
+#     pip install matplotlib
+#     pip install tk
+# Group 6, T10L
+# Mohd Azriy Akmalhazim Bin Mohd Nazariee | 1211104288
+# Muhammad Amir Adib Bin Mohd Aminuddin | 1211103233
+# Meor Imran Najmuddin | 1211101518
+
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
